@@ -2,7 +2,8 @@ package com.higorcraco.votacao_fullstack.controller;
 
 import java.util.UUID;
 
-import com.higorcraco.votacao_fullstack.domain.dto.UsuarioDto;
+import com.higorcraco.votacao_fullstack.dto.UsuarioDto;
+import com.higorcraco.votacao_fullstack.dto.converter.UsuarioDtoConverter;
 import com.higorcraco.votacao_fullstack.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UsuarioController {
 
     private final UsuarioService service;
+    private final UsuarioDtoConverter dtoConverter;
 
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioDto> findById(@PathVariable UUID id) {
-        UsuarioDto dto = UsuarioDto.from(service.findByIdThrow(id));
+        UsuarioDto dto = dtoConverter.from(service.findByIdThrow(id));
 
         return ResponseEntity.ok(dto);
     }
