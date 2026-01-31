@@ -27,7 +27,8 @@ public abstract class ReadOnlyService<T, ID> {
 
     public T findByIdThrow(ID id) {
         return repository.findById(id).orElseThrow(() -> new NotFoundException(
-                String.format("%s com id %s não encontrado", this.getClass().getSimpleName().replace("Service", ""), id)
+                String.format("%s com id %s não encontrado",
+                        this.getClass().getSimpleName().replace("Service", ""), id)
         ));
     }
 
