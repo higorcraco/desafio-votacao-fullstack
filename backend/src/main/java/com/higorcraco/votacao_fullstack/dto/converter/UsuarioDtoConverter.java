@@ -11,20 +11,6 @@ public class UsuarioDtoConverter
         implements DtoConverter<Usuario, UsuarioDto> {
 
     @Override
-    public Usuario to(UsuarioDto dto) {
-        if (Objects.isNull(dto)) {
-            return null;
-        }
-
-        Usuario entity = new Usuario();
-        entity.setId(dto.getId());
-        entity.setCpf(dto.getCpf());
-
-        return entity;
-
-    }
-
-    @Override
     public UsuarioDto from(Usuario entity) {
         if (Objects.isNull(entity)) {
             return null;
