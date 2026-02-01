@@ -1,75 +1,140 @@
-# React + TypeScript + Vite
+# 🗳️ Frontend - Sistema de Votação
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interface React + TypeScript para o sistema de votação fullstack.
 
-Currently, two official plugins are available:
+## 📋 Pré-requisitos
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Node.js** 18+
+- **npm** ou **yarn**
 
-## React Compiler
+## 🚀 Como Iniciar
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+### Instalação
 
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Desenvolvimento
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+A aplicação estará disponível em: `http://localhost:5173`
+
+### Build de Produção
+
+```bash
+npm run build
+```
+
+O build será gerado em `dist/`
+
+### Preview de Produção
+
+```bash
+npm run preview
+```
+
+### Lint
+
+```bash
+npm run lint
+```
+
+## 📁 Estrutura de Pastas
+
+```
+src/
+├── components/          # Componentes reutilizáveis
+│   ├── ErrorBoundary.tsx
+│   └── PrivateRoute.tsx
+├── contexts/            # Context API
+│   └── AuthContext.tsx
+├── pages/               # Páginas da aplicação
+│   ├── Login.tsx
+│   └── pauta/
+│       ├── PautaCard.tsx
+│       ├── PautaList.tsx
+│       ├── PautaModalForm.tsx
+│       └── VotacaoResultado.tsx
+├── services/            # Serviços de API
+│   ├── api.ts
+│   ├── authService.ts
+│   ├── errorInterceptor.ts
+│   ├── pautaService.ts
+│   └── index.ts
+├── types/               # Tipos TypeScript
+│   ├── index.ts
+│   ├── LoginRequest.ts
+│   ├── NovaPauta.ts
+│   ├── Pauta.ts
+│   ├── PautaVoto.ts
+│   ├── User.ts
+│   └── VotoRequest.ts
+├── utils/               # Utilitários
+│   └── dateUtils.ts
+├── App.tsx
+├── App.css
+├── main.tsx
+└── index.css
+```
+
+## 🔧 Variáveis de Ambiente
+
+Crie um arquivo `.env.local` na raiz da pasta frontend:
+
+```env
+VITE_API_BASE_URL=http://localhost:8080/api/v1
+```
+
+**Em Docker**, a variável é definida no `docker-compose.yml`:
+
+```yaml
+environment:
+  - VITE_API_BASE_URL=http://votacao-api:8080/api/v1
+```
+
+## 🎯 Funcionalidades Principais
+
+### Autenticação
+
+- Login por CPF
+- Persistência em localStorage
+- AuthContext para gerenciar estado
+
+### Votação
+
+- Listagem de pautas
+- Votação com validações
+- Visualização de resultados em tempo real
+- Contagem regressiva do tempo restante
+
+### Tratamento de Erros
+
+- **ErrorBoundary**: Captura erros de renderização
+- **SweetAlert2**: Exibição de alertas customizados
+
+## 🐳 Docker
+
+### Build da Imagem
+
+```bash
+docker build -t votacao-frontend .
+```
+
+### Executar Container
+
+```bash
+docker run -p 3000:3000 \
+  -e VITE_API_BASE_URL=http://localhost:8080/api/v1 \
+  votacao-frontend
+```
+
+## 📝 Scripts Disponíveis
+
+- `npm run dev` - Inicia servidor de desenvolvimento
+- `npm run build` - Build para produção
+- `npm run lint` - Executa ESLint
+- `npm run preview` - Visualiza build de produção

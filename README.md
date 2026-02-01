@@ -1,86 +1,93 @@
-# Votação
+# 🗳️ Desafio Técnico - Sistema de Votação Cooperativa
 
-## Objetivo
+Este projeto é uma solução para gerenciamento de sessões de votação em assembleias de cooperativas. A aplicação permite o cadastro de pautas, abertura de sessões com tempo determinado e a contabilização de votos (Sim/Não) de associados, garantindo a unicidade do voto por CPF.
 
-No cooperativismo, cada associado possui um voto e as decisões são tomadas em assembleias, por votação. Imagine que você deve criar uma solução we para gerenciar e participar dessas sessões de votação.
-Essa solução deve ser executada na nuvem e promover as seguintes funcionalidades através de uma API REST / Front:
+---
 
-- Cadastrar uma nova pauta
-- Abrir uma sessão de votação em uma pauta (a sessão de votação deve ficar aberta por
-  um tempo determinado na chamada de abertura ou 1 minuto por default)
-- Receber votos dos associados em pautas (os votos são apenas 'Sim'/'Não'. Cada associado
-  é identificado por um id único e pode votar apenas uma vez por pauta)
-- Contabilizar os votos e dar o resultado da votação na pauta
+### 📌 Índice
+1. [Como Executar o Projeto](#-como-executar-o-projeto)
+2. [Arquitetura e Tecnologias](#-arquitetura-e-tecnologias)
+3. [Escolhas Técnicas](#-escolhas-técnicas)
+4. [Tarefas Bônus](#-tarefas-bônus)
+5. [Documentação da API](#-documentação-da-api)
 
-Para fins de exercício, a segurança das interfaces pode ser abstraída e qualquer chamada para as interfaces pode ser considerada como autorizada. A solução deve ser construída em java com Spring-boot e Angular/React conforme orientação, mas os frameworks e bibliotecas são de livre escolha (desde que não infrinja direitos de uso).
+---
 
-É importante que as pautas e os votos sejam persistidos e que não sejam perdidos com o restart da aplicação.
+### 🚀 Como Executar o Projeto
 
-## Como proceder
+A forma mais simples e recomendada de subir o ambiente completo (Backend + Frontend + Banco de Dados) é utilizando o **Docker Compose**.
 
-Por favor, realize o FORK desse repositório e implemente sua solução no FORK em seu repositório GItHub, ao final, notifique da conclusão para que possamos analisar o código implementado.
-
-Lembre de deixar todas as orientações necessárias para executar o seu código.
-
-### Tarefas bônus
-
-- Tarefa Bônus 1 - Integração com sistemas externos
-  - Criar uma Facade/Client Fake que retorna aleátoriamente se um CPF recebido é válido ou não.
-  - Caso o CPF seja inválido, a API retornará o HTTP Status 404 (Not found). Você pode usar geradores de CPF para gerar CPFs válidos
-  - Caso o CPF seja válido, a API retornará se o usuário pode (ABLE_TO_VOTE) ou não pode (UNABLE_TO_VOTE) executar a operação. Essa operação retorna resultados aleatórios, portanto um mesmo CPF pode funcionar em um teste e não funcionar no outro.
-
-```
-// CPF Ok para votar
-{
-    "status": "ABLE_TO_VOTE
-}
-// CPF Nao Ok para votar - retornar 404 no client tb
-{
-    "status": "UNABLE_TO_VOTE
-}
+Na raiz do projeto, execute:
+```bash
+docker-compose up -d
 ```
 
-Exemplos de retorno do serviço
+Após o processamento, as aplicações estarão disponíveis em:
+- **Frontend:** [http://localhost:3000](http://localhost:3000)
+- **Backend:** [http://localhost:8080](http://localhost:8080)
 
-### Tarefa Bônus 2 - Performance
+> **Nota:** Para instruções detalhadas de execução individual, configurações de ambiente ou scripts de build, consulte os arquivos específicos:
+> - [README do Backend](./backend/README.md)
+> - [README do Frontend](./frontend/README.md)
 
-- Imagine que sua aplicação possa ser usada em cenários que existam centenas de
-  milhares de votos. Ela deve se comportar de maneira performática nesses
-  cenários
-- Testes de performance são uma boa maneira de garantir e observar como sua
-  aplicação se comporta
+---
 
-### Tarefa Bônus 3 - Versionamento da API
+### 🏗️ Arquitetura e Tecnologias
 
-○ Como você versionaria a API da sua aplicação? Que estratégia usar?
+O projeto foi construído utilizando uma stack moderna e escalável:
+- **Backend:** Java 17, Spring Boot 3.x, Spring Data JPA, Hibernate.
+- **Frontend:** React, TypeScript, Bootstrap 5 (React Bootstrap).
+- **Banco de Dados:** H2 (Desenvolvimento/Testes) e suporte a PostgreSQL (Produção).
 
-## O que será analisado
+Sugestão de arquitetura:
+[arquitetura.png](assets/arquitetura.png)
 
-- Simplicidade no design da solução (evitar over engineering)
-- Organização do código
-- Arquitetura do projeto
-- Boas práticas de programação (manutenibilidade, legibilidade etc)
-- Possíveis bugs
-- Tratamento de erros e exceções
-- Explicação breve do porquê das escolhas tomadas durante o desenvolvimento da solução
-- Uso de testes automatizados e ferramentas de qualidade
-- Limpeza do código
-- Documentação do código e da API
-- Logs da aplicação
-- Mensagens e organização dos commits
-- Testes
-- Layout responsivo
+---
 
-## Dicas
+### 💡 Escolhas Técnicas
 
-- Teste bem sua solução, evite bugs
+#### 1. Persistência de Datas com `Instant`
+Optou-se pelo uso de `java.time.Instant` para todas as marcações temporais. Isso garante que a aplicação seja **agnóstica a fuso horário (Timezone Agnostic)**. O backend opera estritamente em UTC, enquanto o frontend é responsável por converter e exibir a data no fuso horário local do associado.
 
-  Observações importantes
-- Não inicie o teste sem sanar todas as dúvidas
-- Iremos executar a aplicação para testá-la, cuide com qualquer dependência externa e
-  deixe claro caso haja instruções especiais para execução do mesmo
-  Classificação da informação: Uso Interno
+#### 2. Identificadores UUID
+Utilizamos **UUID (Universally Unique Identifier)** como chave primária para as entidades. Isso aumenta a segurança (evitando a exposição da quantidade de registros via IDs sequenciais) e facilita a escalabilidade em ambientes distribuídos.
 
+Em um projeto grande eu recomendaria o uso do UUID V7 que melhora a indexação no banco de dados ser baseado em tempo e ordenável, ao contrário do UUIDv4, que é puramente aleatório.
 
+#### 3. Mapeamento de DTOs
+Pela simplicidade do projeto foi escolhido por implementar a própria solução de converter. Em um projeto maior, o uso de um mapStruct poderia agilizar o desenvolvimento. 
 
-# desafio-votacao
+---
+
+### 🌟 Tarefas Bônus
+
+#### Bônus 1: Integração com Sistemas Externos (Validação de CPF)
+Foi implementada uma **Facade/Client** que simula a integração com um serviço de validação de CPF.
+- A lógica inclui a aleatoriedade solicitada, retornando `ABLE_TO_VOTE`, `UNABLE_TO_VOTE` ou `404 Not Found`.
+- A arquitetura foi desenhada para que a substituição por uma API REST real seja feita apenas alterando a implementação do Client, sem afetar as regras de negócio.
+
+#### Bônus 2: Performance e Testes de Carga
+- Adicionado índices às tabelas do banco para melhoria da performance
+
+#### Bônus 3: Versionamento da API
+A API foi versionada diretamente na URL (ex: `/api/v1/...`). Esta escolha foi feita pela simplicidade de consumo e clareza na documentação, permitindo que futuras versões (v2) coexistam sem quebrar clientes antigos.
+
+Outra opção mais moderna seria o versionamento através do header.
+
+---
+
+### 📖 Documentação da API
+
+A documentação interativa da API (Swagger/OpenAPI) pode ser acessada, com a aplicação rodando, em:
+- [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+---
+
+### 🛠️ Melhorias Futuras
+- [ ] Utilização do Liquibase para obter mais controle nas alterações do banco.
+- [ ] Implementação de Cache com Redis para verificar se o usuário já votou, definindo o tempo de expiração da informação pela duração da pauta.
+- [ ] Autenticação JWT.
+
+---
+
+**Desenvolvido por:** [Higor Craco Baltieri]
