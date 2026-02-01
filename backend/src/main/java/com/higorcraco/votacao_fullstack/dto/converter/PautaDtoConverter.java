@@ -4,10 +4,14 @@ import java.util.Objects;
 
 import com.higorcraco.votacao_fullstack.domain.Pauta;
 import com.higorcraco.votacao_fullstack.dto.PautaDto;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 public class PautaDtoConverter implements DtoConverter<Pauta, PautaDto> {
+
+    private final PautaVotoDtoConverter pautaVotoDtoConverter;
 
     @Override
     public PautaDto from(Pauta entity) {
@@ -22,6 +26,9 @@ public class PautaDtoConverter implements DtoConverter<Pauta, PautaDto> {
         dto.setDataCriacao(entity.getDataCriacao());
         dto.setDataFinalVotacao(entity.getDataFinalVotacao());
         dto.setStatus(entity.getStatus().getDescricao());
+
+        dto.setVotos(entity.getVotos().stream().map(pautaVotoDtoConverter::from).toList());
+
         return dto;
     }
 }
