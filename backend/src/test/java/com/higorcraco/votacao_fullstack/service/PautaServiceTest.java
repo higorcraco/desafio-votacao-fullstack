@@ -1,15 +1,19 @@
 package com.higorcraco.votacao_fullstack.service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.higorcraco.votacao_fullstack.client.CpfValidatorClient;
 import com.higorcraco.votacao_fullstack.domain.Pauta;
 import com.higorcraco.votacao_fullstack.domain.PautaVoto;
 import com.higorcraco.votacao_fullstack.domain.Usuario;
+import com.higorcraco.votacao_fullstack.domain.integracao.enums.CpfStatusEnum;
 import com.higorcraco.votacao_fullstack.dto.CreatePautaDto;
 import com.higorcraco.votacao_fullstack.dto.VotoDto;
+import com.higorcraco.votacao_fullstack.dto.integracao.CpfStatusDto;
 import com.higorcraco.votacao_fullstack.exception.NotFoundException;
 import com.higorcraco.votacao_fullstack.repository.PautaRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,11 +44,14 @@ class PautaServiceTest {
     @Mock
     private UsuarioService usuarioService;
 
+    @Mock
+    private CpfValidatorClient cpfValidatorClient;
+
     private PautaService pautaService;
 
     @BeforeEach
     void setUp() {
-        pautaService = new PautaService(pautaVotoService, usuarioService);
+        pautaService = new PautaService(pautaVotoService, usuarioService, cpfValidatorClient);
         ReflectionTestUtils.setField(pautaService, "repository", pautaRepository);
     }
 
@@ -52,8 +60,8 @@ class PautaServiceTest {
         pauta.setId(UUID.randomUUID());
         pauta.setDescricao("Pauta sobre orçamento");
         pauta.setDuracao(60L);
-        pauta.setDataCriacao(LocalDateTime.now());
-        pauta.setDataFinalVotacao(LocalDateTime.now().plusMinutes(60));
+        pauta.setDataCriacao(Instant.now());
+        pauta.setDataFinalVotacao(Instant.now().plus(60, ChronoUnit.MINUTES));
         pauta.setVotos(new ArrayList<>());
         return pauta;
     }
@@ -95,15 +103,29 @@ class PautaServiceTest {
 
         when(usuarioService.findByIdThrow(usuarioId)).thenReturn(usuarioMock);
         when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pautaMock));
+        when(cpfValidatorClient.consultaStatus(any())).thenReturn(new CpfStatusDto(CpfStatusEnum.ABLE_TO_VOTE.name()));
         when(pautaVotoService.existsByPautaIdAndUsuarioId(pautaId, usuarioId)).thenReturn(false);
-        when(pautaRepository.saveAndFlush(any(Pauta.class))).thenReturn(pautaMock);
+        when(pautaVotoService.save(any(PautaVoto.class))).thenAnswer(i -> {
+            PautaVoto pautaVoto = i.getArgument(0);
+            pautaVoto.setId(UUID.randomUUID());
+            pautaVoto.setPauta(pautaMock);
+            pautaVoto.setUsuario(usuarioMock);
+            return pautaVoto;
+        });
 
         PautaVoto resultado = pautaService.adicionaVoto(pautaId, votoDto);
 
         assertThat(resultado).isNotNull();
         assertThat(resultado.getPauta()).isEqualTo(pautaMock);
         assertThat(resultado.getUsuario()).isEqualTo(usuarioMock);
-        verify(pautaRepository, times(1)).saveAndFlush(pautaMock);
+
+
+        verify(usuarioService).findByIdThrow(usuarioId);
+        verify(pautaRepository).findById(pautaId);
+        verify(cpfValidatorClient).consultaStatus(usuarioMock.getCpf());
+        verify(pautaVotoService).existsByPautaIdAndUsuarioId(pautaId, usuarioId);
+        verify(pautaVotoService).save(any(PautaVoto.class));
+        verifyNoMoreInteractions(usuarioService, pautaRepository, cpfValidatorClient, pautaVotoService);
     }
 
     @Test
@@ -113,7 +135,7 @@ class PautaServiceTest {
 
         Pauta pautaFinalizada = new Pauta();
         pautaFinalizada.setId(UUID.randomUUID());
-        pautaFinalizada.setDataFinalVotacao(LocalDateTime.now().minusHours(1));
+        pautaFinalizada.setDataFinalVotacao(Instant.now().minus(1, ChronoUnit.HOURS));
 
         VotoDto votoDto = new VotoDto();
         votoDto.setUsuarioId(usuarioId);
@@ -121,6 +143,7 @@ class PautaServiceTest {
 
         when(usuarioService.findByIdThrow(usuarioId)).thenReturn(usuarioMock);
         when(pautaRepository.findById(pautaFinalizada.getId())).thenReturn(Optional.of(pautaFinalizada));
+        when(cpfValidatorClient.consultaStatus(any())).thenReturn(new CpfStatusDto(CpfStatusEnum.ABLE_TO_VOTE.name()));
 
         assertThatThrownBy(() -> pautaService.adicionaVoto(pautaFinalizada.getId(), votoDto))
                 .isInstanceOf(IllegalStateException.class)
@@ -142,6 +165,7 @@ class PautaServiceTest {
 
         when(usuarioService.findByIdThrow(usuarioId)).thenReturn(usuarioMock);
         when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pautaMock));
+        when(cpfValidatorClient.consultaStatus(any())).thenReturn(new CpfStatusDto(CpfStatusEnum.ABLE_TO_VOTE.name()));
         when(pautaVotoService.existsByPautaIdAndUsuarioId(pautaId, usuarioId)).thenReturn(true);
 
         assertThatThrownBy(() -> pautaService.adicionaVoto(pautaId, votoDto))

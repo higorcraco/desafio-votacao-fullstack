@@ -1,6 +1,7 @@
 package com.higorcraco.votacao_fullstack.service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 import com.higorcraco.votacao_fullstack.client.CpfValidatorClient;
@@ -27,8 +28,8 @@ public class PautaService extends ReadOnlyService<Pauta, UUID>{
         Pauta pauta = new Pauta();
         pauta.setDescricao(createPautaDto.getDescricao());
         pauta.setDuracao(createPautaDto.getDuracao());
-        pauta.setDataCriacao(LocalDateTime.now());
-        pauta.setDataFinalVotacao(pauta.getDataCriacao().plusMinutes(pauta.getDuracao()));
+        pauta.setDataCriacao(Instant.now());
+        pauta.setDataFinalVotacao(pauta.getDataCriacao().plus(pauta.getDuracao(), ChronoUnit.MINUTES));
 
         return getRepository().saveAndFlush(pauta);
     }

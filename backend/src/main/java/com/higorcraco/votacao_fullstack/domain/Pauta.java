@@ -1,6 +1,6 @@
 package com.higorcraco.votacao_fullstack.domain;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -33,15 +33,15 @@ public class Pauta {
 
     private Long duracao = 1L;
 
-    private LocalDateTime dataCriacao = LocalDateTime.now();
+    private Instant dataCriacao = Instant.now();
 
-    private LocalDateTime dataFinalVotacao;
+    private Instant dataFinalVotacao;
 
     @OneToMany(mappedBy = "pauta")
     private List<PautaVoto> votos = new ArrayList<>();
 
     public PautaStatusEnum getStatus() {
-        return LocalDateTime.now().isAfter(dataFinalVotacao)
+        return Instant.now().isAfter(dataFinalVotacao)
                 ? PautaStatusEnum.FINALIZADA
                 : PautaStatusEnum.EM_VOTACAO;
     }

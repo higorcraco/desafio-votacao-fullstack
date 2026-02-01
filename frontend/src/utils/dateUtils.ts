@@ -1,5 +1,10 @@
 export const formatarData = (data: string) => {
   const date = new Date(data);
+
+  if (isNaN(date.getTime())) {
+    return "Data inválida";
+  }
+
   return date.toLocaleString("pt-BR", {
     day: "2-digit",
     month: "2-digit",
