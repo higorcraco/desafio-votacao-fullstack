@@ -10,12 +10,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-@Table(name = "pauta")
+@Table(name = "pauta", indexes = {
+        @Index(name = "idx_data_criacao", columnList = "data_criacao"),
+        @Index(name = "idx_data_final_votacao", columnList = "data_final_votacao")
+})
 @Entity
 @Data
 @EqualsAndHashCode(of = "id")
