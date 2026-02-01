@@ -1,0 +1,57 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: votacao_postgres
+    environment:
+      POSTGRES_DB: votacao_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - votacao-network
+
+  votacao-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: votacao_api
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/votacao_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - votacao-network
+
+  votacao-client:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: votacao-client
+    ports:
+      - "3000:3000"
+    environment:
+      - VITE_API_BASE_URL=http://votacao-api:8080/api/v1
+    depends_on:
+      votacao-api:
+        condition: service_healthy
+    networks:
+      - votacao-network
+
+volumes:
+  postgres_data:
+
+networks:
+  votacao-network:
+    driver: bridge
