@@ -13,7 +13,7 @@ management:
   endpoint:
     health:
       show-details: always
-  metrics:
-    export:
-      simple:
+  simple:
+    metrics:
+      export:
         enabled: true
