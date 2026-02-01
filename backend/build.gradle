@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.2'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'pmd'
 }
 
 group = 'com.higorcraco'
@@ -39,8 +40,20 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	pmd 'net.sourceforge.pmd:pmd-java:6.55.0'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+pmd {
+	toolVersion = '6.55.0'
+	ignoreFailures = false
+	ruleSetFiles = files('config/pmd/ruleset.xml')
+
+	sourceSets {
+		main
+	}
 }
