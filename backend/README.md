@@ -93,6 +93,26 @@ Detecta:
 - Métodos muito longos
 - Problemas de performance
 
+### JaCoCo - Test Coverage
+
+```bash
+./gradlew test
+```
+
+Gera relatório de cobertura em: `build/reports/jacoco/test/html/index.html`
+
+Verifica cobertura mínima de 90%:
+
+```bash
+./gradlew jacocoTestCoverageVerification
+```
+
+Métricas medidas:
+- Linhas de código cobertas
+- Branches/decisões cobertas
+- Métodos executados
+- Complexidade cíclica
+
 ## 📚 Endpoints Principais
 
 ### Autenticação
@@ -116,6 +136,5 @@ Detecta:
 
 ## 📖 Documentação Adicional
 
-- [PMD.md](./PMD.md) - Análise estática de código
 - [Dockerfile](./Dockerfile) - Imagem Docker
-- [docker-compose.yml](../docker-compose.yml) - Orquestração
+- [docker-compose.yml](./docker-compose.yml) - Orquestração
