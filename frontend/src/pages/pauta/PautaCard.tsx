@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Badge, Button, Card } from "react-bootstrap";
+import { Badge, Button, Card } from "react-bootstrap";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
+import Swal from "sweetalert2";
 import { useAuth } from "../../contexts/AuthContext";
 import { pautaService } from "../../services";
 import type { Pauta } from "../../types";
-import { formatarData } from "../../utils/dataUtils";
+import { formatarData, intervaloTempoToString } from "../../utils/dateUtils";
 import VotacaoResultado from "./VotacaoResultado";
 
 interface PautaCardProps {
@@ -17,8 +18,6 @@ const PautaCard: React.FC<PautaCardProps> = ({ pauta, onVotoSuccess }) => {
   const [emAndamento, setEmAndamento] = useState(false);
   const [tempoRestante, setTempoRestante] = useState("");
   const [usuarioVotou, setUsuarioVotou] = useState(false);
-  const [erro, setErro] = useState("");
-  const [sucesso, setSucesso] = useState("");
   const [votando, setVotando] = useState(false);
 
   useEffect(() => {
@@ -39,12 +38,10 @@ const PautaCard: React.FC<PautaCardProps> = ({ pauta, onVotoSuccess }) => {
         return false;
       } else {
         setEmAndamento(true);
-        const diff = final.getTime() - agora.getTime();
-        const minutos = Math.floor(diff / 60000);
-        const segundos = Math.floor((diff % 60000) / 1000);
         setTempoRestante(
-          `${minutos.toString().padStart(2, "0")}:${segundos.toString().padStart(2, "0")}`,
+          intervaloTempoToString(final.getTime() - agora.getTime()),
         );
+
         return true;
       }
     };
@@ -64,8 +61,6 @@ const PautaCard: React.FC<PautaCardProps> = ({ pauta, onVotoSuccess }) => {
   const handleVotar = async (voto: boolean) => {
     if (!user) return;
 
-    setErro("");
-    setSucesso("");
     setVotando(true);
 
     try {
@@ -73,18 +68,33 @@ const PautaCard: React.FC<PautaCardProps> = ({ pauta, onVotoSuccess }) => {
         usuarioId: user.id,
         voto,
       });
-      setSucesso(`Voto registrado com sucesso!`);
+
+      Swal.fire({
+        icon: "success",
+        title: "Voto Registrado!",
+        text: "Seu voto foi registrado com sucesso!",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#198754",
+      });
+
       onVotoSuccess();
     } catch (error: any) {
       const mensagem =
         error.response?.data?.message ||
+        error.message ||
         "Erro ao registrar voto. Tente novamente.";
-      setErro(mensagem);
+
+      Swal.fire({
+        icon: "error",
+        title: "Erro ao Votar",
+        text: mensagem,
+        confirmButtonText: "OK",
+        confirmButtonColor: "#dc3545",
+      });
     } finally {
       setVotando(false);
     }
   };
-
   const getStatus = () => {
     return (
       <>
@@ -93,9 +103,6 @@ const PautaCard: React.FC<PautaCardProps> = ({ pauta, onVotoSuccess }) => {
             <Badge bg="success" className="me-2">
               Aberta
             </Badge>
-            <span className="text-success fw-bold">
-              Fecha em: {tempoRestante}
-            </span>
           </>
         ) : (
           <Badge bg="danger">Finalizada</Badge>
@@ -120,15 +127,10 @@ const PautaCard: React.FC<PautaCardProps> = ({ pauta, onVotoSuccess }) => {
           <small>Encerra em: {formatarData(pauta.dataFinalVotacao)}</small>
         </p>
 
-        {erro && (
-          <Alert variant="danger" dismissible onClose={() => setErro("")}>
-            {erro}
-          </Alert>
-        )}
-        {sucesso && (
-          <Alert variant="success" dismissible onClose={() => setSucesso("")}>
-            {sucesso}
-          </Alert>
+        {emAndamento && (
+          <span className="text-success fw-bold">
+            Fecha em: {tempoRestante}
+          </span>
         )}
 
         {(!emAndamento || usuarioVotou) && (
