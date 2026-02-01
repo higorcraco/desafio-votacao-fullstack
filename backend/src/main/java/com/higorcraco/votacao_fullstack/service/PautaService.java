@@ -44,10 +44,8 @@ public class PautaService extends ReadOnlyService<Pauta, UUID>{
         PautaVoto novoVoto = new PautaVoto();
         novoVoto.setPauta(pauta);
         novoVoto.setUsuario(usuario);
+        novoVoto.setVoto(voto.getVoto());
 
-        pauta.getVotos().add(novoVoto);
-
-        getRepository().saveAndFlush(pauta);
-        return novoVoto;
+        return pautaVotoService.save(novoVoto);
     }
 }

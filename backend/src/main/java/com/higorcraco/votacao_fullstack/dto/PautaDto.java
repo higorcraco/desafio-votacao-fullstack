@@ -1,6 +1,7 @@
 package com.higorcraco.votacao_fullstack.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import lombok.Data;
@@ -14,4 +15,6 @@ public class PautaDto {
     private LocalDateTime dataCriacao;
     private LocalDateTime dataFinalVotacao;
     private String status;
+    private List<PautaVotoDto> votos;
+
 }

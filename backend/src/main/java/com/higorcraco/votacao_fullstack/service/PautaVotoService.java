@@ -14,4 +14,8 @@ public class PautaVotoService extends ReadOnlyService<PautaVoto, UUID> {
     public boolean existsByPautaIdAndUsuarioId(UUID pautaId, UUID usuarioId) {
         return getRepository(PautaVotoRepository.class).existsByPautaIdAndUsuarioId(pautaId, usuarioId);
     }
+
+    public PautaVoto save(PautaVoto pautaVoto) {
+        return getRepository().saveAndFlush(pautaVoto);
+    }
 }

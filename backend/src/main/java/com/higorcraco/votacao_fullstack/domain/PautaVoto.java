@@ -36,4 +36,6 @@ public class PautaVoto {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+
+    private Boolean voto;
 }

@@ -19,6 +19,7 @@ public class PautaVotoDtoConverter
 
         PautaVotoDto dto = new PautaVotoDto();
         dto.setId(entity.getId());
+        dto.setVoto(entity.getVoto());
 
         Optional.ofNullable(entity.getPauta())
                 .ifPresent(pauta -> dto.setPautaId(pauta.getId()));

@@ -9,4 +9,5 @@ public class PautaVotoDto {
     private UUID id;
     private UUID usuarioId;
     private UUID pautaId;
+    private Boolean voto;
 }
