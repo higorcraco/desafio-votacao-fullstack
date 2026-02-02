@@ -4,6 +4,50 @@ Este projeto é uma solução para gerenciamento de sessões de votação em ass
 
 ---
 
+## Considerações
+
+A fim de manter o projeto simples foram feitas algumas escolhas técnicas com grandes trade-offs.
+
+Ao buscar as pautas, estamos também buscando todos os seus votos para poder computar os votos em tempo real e verificar se o usuário já votou naquela pauta, oque gera um problema de n+1.
+
+Também seria interessante entender se o usuário deveria poder ou não ver a totalização de votos da pauta antes dela ser finalizada. Isso teria impacto em como as coisas são feitas atualmente.
+
+Algumas soluções foram evitadas para evitar adicionar complexidade no projeto, porém resolveriam alguns dos problemas atuais. Algumas delas poderiam inclusive ser utilizadas em conjunto. Seguem as possibilidades:
+
+#### 1. Filas
+
+Ao adicionar os votos, poderíamos enviá-los em uma fila, onde eles seriam somados a uma tabela de totalização, podendo ter uma inconsistência do total enquanto a pauta estiver em aberto, porém eventualmente ficaria consistente.
+ 
+#### 2. Cache
+
+Poderíamos manter os votos das pautas em aberto em cache, reduzindo a carga ao banco. 
+
+#### 3. Scheduler
+
+A criação de um scheduler para totalizar as pautas fechadas minuto a minuto, poderia reduzir a carga ao banco em futuras requisições uma vez que estariam salvas as informações já totalizadas junto à pauta.
+
+#### 4. Web-socket
+
+Utilizar um web-socket para que a API avise o client quando uma pauta for totalizada.
+
+#### 5. Context do usuário
+
+O client poderia conter um context para o usuário que buscasse as pautas em aberto que o usuário votou. Dessa forma seria fácil controlar no client qual pauta o usuário pode voltar sem grandes cargas no banco de dados.
+
+
+
+### Melhor cenário
+
+Para mim o melhor cenário seria que o usuário não pudesse ver os votos até que a pauta fosse finalizada. Dessa forma evitamos que outros usuários possam ser influenciados e também facilitamos algumas decisões técnicas.
+
+Nesse caso na minha visão o melhor cenário seria:
+
+#### 🥇 Fila + Context do usuário
+
+#### 🥈 Scheduler + Context do usuário
+
+---
+
 ### 📌 Índice
 1. [Como Executar o Projeto](#-como-executar-o-projeto)
 2. [Arquitetura e Tecnologias](#-arquitetura-e-tecnologias)
