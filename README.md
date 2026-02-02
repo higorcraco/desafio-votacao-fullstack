@@ -112,6 +112,7 @@ Foi implementada uma **Facade/Client** que simula a integração com um serviço
 
 #### Bônus 2: Performance e Testes de Carga
 - Adicionado índices às tabelas do banco para melhoria da performance
+- Não foi realizado teste de carga, pois eu não tinha conhecimento de como fazê-lo e devido ao limite de tempo não seria possível aprender. Eu poderia fazer utilizando uma IA, porém não parece fazer sentido em um teste técnico.
 
 #### Bônus 3: Versionamento da API
 A API foi versionada diretamente na URL (ex: `/api/v1/...`). Esta escolha foi feita pela simplicidade de consumo e clareza na documentação, permitindo que futuras versões (v2) coexistam sem quebrar clientes antigos.
@@ -130,7 +131,9 @@ A documentação interativa da API (Swagger/OpenAPI) pode ser acessada, com a ap
 ### 🛠️ Melhorias Futuras
 - [ ] Utilização do Liquibase para obter mais controle nas alterações do banco.
 - [ ] Implementação de Cache com Redis para verificar se o usuário já votou, definindo o tempo de expiração da informação pela duração da pauta.
-- [ ] Autenticação JWT.
+- [ ] Autenticação JWT com Usuário no ContextHolder.
+- [ ] Utilização de RSQL para buscas complexas
+- [ ] Paginação
 
 ---
 
