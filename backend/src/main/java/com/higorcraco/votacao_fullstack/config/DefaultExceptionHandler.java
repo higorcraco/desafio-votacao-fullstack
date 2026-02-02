@@ -2,7 +2,6 @@ package com.higorcraco.votacao_fullstack.config;
 
 import com.higorcraco.votacao_fullstack.exception.ExceptionResponse;
 import com.higorcraco.votacao_fullstack.exception.NotFoundException;
-import com.higorcraco.votacao_fullstack.exception.integracao.CpfNaoEncontrado;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,14 +24,6 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public final ResponseEntity<ExceptionResponse> notFoundException(Exception ex, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(
-                ex.getMessage(), request.getDescription(false));
-
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(CpfNaoEncontrado.class)
-    public final ResponseEntity<ExceptionResponse> cpfNaoEncontrado(Exception ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 ex.getMessage(), request.getDescription(false));
 
