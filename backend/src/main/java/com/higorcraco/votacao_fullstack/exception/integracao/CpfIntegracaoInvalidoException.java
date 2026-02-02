@@ -2,9 +2,9 @@ package com.higorcraco.votacao_fullstack.exception.integracao;
 
 import com.higorcraco.votacao_fullstack.exception.NotFoundException;
 
-public class CpfNaoEncontradoException
+public class CpfIntegracaoInvalidoException
         extends NotFoundException {
-    public CpfNaoEncontradoException(String message) {
+    public CpfIntegracaoInvalidoException(String message) {
         super(message);
     }
 }

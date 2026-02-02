@@ -15,7 +15,7 @@ import com.higorcraco.votacao_fullstack.dto.CreatePautaDto;
 import com.higorcraco.votacao_fullstack.dto.VotoDto;
 import com.higorcraco.votacao_fullstack.dto.integracao.CpfStatusDto;
 import com.higorcraco.votacao_fullstack.exception.NotFoundException;
-import com.higorcraco.votacao_fullstack.exception.integracao.CpfInvalidoException;
+import com.higorcraco.votacao_fullstack.exception.integracao.CpfIntegracaoInvalidoException;
 import com.higorcraco.votacao_fullstack.repository.PautaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -238,7 +238,7 @@ class PautaServiceTest {
                 .thenReturn(new CpfStatusDto(CpfStatusEnum.UNABLE_TO_VOTE.name()));
 
         assertThatThrownBy(() -> pautaService.adicionaVoto(pauta.getId(), votoDto))
-                .isInstanceOf(CpfInvalidoException.class)
+                .isInstanceOf(CpfIntegracaoInvalidoException.class)
                 .hasMessageContaining("Este CPF está inabilitado para votos");
 
         verify(pautaRepository, never()).saveAndFlush(any(Pauta.class));
