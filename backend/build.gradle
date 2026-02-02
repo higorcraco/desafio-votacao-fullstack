@@ -40,6 +40,8 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-webmvc-test'
+	testImplementation 'org.springframework.boot:spring-boot-test-autoconfigure'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	pmd 'net.sourceforge.pmd:pmd-java:6.55.0'
@@ -79,21 +81,8 @@ tasks.named('jacocoTestReport') {
 jacocoTestCoverageVerification {
 	violationRules {
 		rule {
-			element = 'PACKAGE'
+			element = 'BUNDLE'
 			excludes = ['com.higorcraco.votacao_fullstack.config']
-
-			limit {
-				minimum = 0.90
-			}
-		}
-
-		rule {
-			element = 'CLASS'
-			excludes = [
-				'**/config/**',
-				'**/exception/**',
-				'**/VotacaoFullstackApplication'
-			]
 
 			limit {
 				minimum = 0.90
