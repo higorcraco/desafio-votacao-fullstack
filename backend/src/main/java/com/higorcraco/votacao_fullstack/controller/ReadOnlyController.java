@@ -1,7 +1,5 @@
 package com.higorcraco.votacao_fullstack.controller;
 
-import java.util.List;
-
 import com.higorcraco.votacao_fullstack.dto.converter.DtoConverter;
 import com.higorcraco.votacao_fullstack.service.ReadOnlyService;
 import lombok.Getter;
@@ -33,12 +31,6 @@ public abstract class ReadOnlyController<T, ID, D> {
     }
 
     @GetMapping
-    public ResponseEntity<List<D>> findAll() {
-        List<D> dtoList = service.findAll().stream().map(dtoConverter::from).toList();
-
-        return ResponseEntity.ok(dtoList);
-    }
-
     public ResponseEntity<Page<D>> findAll(Pageable pageable) {
         Page<D> dtoPage = service.findAll(pageable).map(dtoConverter::from);
 
