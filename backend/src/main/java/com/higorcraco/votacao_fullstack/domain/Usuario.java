@@ -10,6 +10,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.br.CPF;
 
 @Table(
         name = "usuario",
@@ -26,5 +27,6 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @CPF
     private String cpf;
 }
