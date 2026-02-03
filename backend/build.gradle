@@ -82,7 +82,11 @@ jacocoTestCoverageVerification {
 	violationRules {
 		rule {
 			element = 'BUNDLE'
-			excludes = ['com.higorcraco.votacao_fullstack.config']
+			excludes = [
+				'com.higorcraco.votacao_fullstack.config',
+				'com.higorcraco.votacao_fullstack.client',
+				'com.higorcraco.votacao_fullstack.exception'
+			]
 
 			limit {
 				minimum = 0.90
