@@ -36,7 +36,7 @@ const PautaModalForm: React.FC<PautaModalFormProps> = ({
     setSalvando(true);
 
     try {
-      await pautaService.criarPauta({
+      await pautaService.create({
         descricao: descricao.trim(),
         duracao,
       });

@@ -12,7 +12,12 @@ import api from "./api";
 const defaultSort = "dataCriacao,desc";
 
 export const pautaService = {
-  listarPautas: async (
+  findById: async (pautaId: string): Promise<Pauta> => {
+    const response = await api.get<Pauta>(`/pautas/${pautaId}`);
+    return response.data;
+  },
+
+  findAll: async (
     pageRequest: PageRequest = defaultPageRequest,
     sort: string = defaultSort,
   ): Promise<PageResponse<Pauta>> => {
@@ -25,12 +30,15 @@ export const pautaService = {
     return response.data;
   },
 
-  criarPauta: async (data: NovaPautaRequest): Promise<Pauta> => {
+  create: async (data: NovaPautaRequest): Promise<Pauta> => {
     const response = await api.post<Pauta>("/pautas", data);
     return response.data;
   },
 
-  votar: async (pautaId: string, voto: VotoRequest): Promise<PautaVoto> => {
+  adicionaVoto: async (
+    pautaId: string,
+    voto: VotoRequest,
+  ): Promise<PautaVoto> => {
     const response = await api.post<PautaVoto>(
       `/pautas/${pautaId}/votos`,
       voto,

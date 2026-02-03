@@ -33,7 +33,7 @@ const PautaList: React.FC = () => {
     setCarregando(true);
 
     try {
-      const data = await pautaService.listarPautas({ page, size: pageSize });
+      const data = await pautaService.findAll({ page, size: pageSize });
       setPautas(data.content);
       setTotalPages(data.totalPages);
       setCurrentPage(data.number);
@@ -62,6 +62,14 @@ const PautaList: React.FC = () => {
 
   const handleNovaPautaSuccess = () => {
     carregarPautas(0);
+  };
+
+  const updatePauta = (pautaId: string) => {
+    pautaService.findById(pautaId).then((updatedPauta) => {
+      setPautas((prevPautas) =>
+        prevPautas.map((p) => (p.id === pautaId ? updatedPauta : p)),
+      );
+    });
   };
 
   return (
@@ -104,7 +112,7 @@ const PautaList: React.FC = () => {
             <Row xs={1} md={2} lg={3} className="g-4">
               {pautas.map((pauta) => (
                 <Col key={pauta.id}>
-                  <PautaCard pauta={pauta} onVotoSuccess={carregarPautas} />
+                  <PautaCard pauta={pauta} updatePauta={updatePauta} />
                 </Col>
               ))}
             </Row>
