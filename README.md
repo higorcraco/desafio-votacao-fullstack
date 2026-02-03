@@ -123,13 +123,6 @@ Outra opção mais moderna seria o versionamento através do header.
 
 ---
 
-### 📖 Documentação da API
-
-A documentação interativa da API (Swagger/OpenAPI) pode ser acessada, com a aplicação rodando, em:
-- [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-
----
-
 ### 🛠️ Melhorias Futuras
 - [ ] Utilização do Liquibase para obter mais controle nas alterações do banco.
 - [ ] Implementação de Cache com Redis para verificar se o usuário já votou, definindo o tempo de expiração da informação pela duração da pauta.
