@@ -42,33 +42,6 @@ export SPRING_PROFILES_ACTIVE=prod
 - **dev** (padrão): H2 em arquivo, logs DEBUG, H2 Console habilitado
 - **prod**: PostgreSQL, logs INFO, validação de schema
 
-## 📊 Estrutura do Projeto
-
-```
-backend/
-├── src/
-│   ├── main/
-│   │   ├── java/com/higorcraco/votacao_fullstack/
-│   │   │   ├── config/          # Configurações (CORS, Timezone)
-│   │   │   ├── controller/      # Endpoints REST
-│   │   │   ├── domain/          # Entidades JPA
-│   │   │   ├── dto/             # Data Transfer Objects
-│   │   │   ├── exception/       # Exceções customizadas
-│   │   │   ├── repository/      # Camada de persistência
-│   │   │   └── service/         # Lógica de negócio
-│   │   └── resources/
-│   │       ├── application.yaml # Config padrão (H2)
-│   │       └── application-prod.yaml # Config produção
-│   └── test/
-│       ├── java/                # Testes unitários
-│       └── resources/
-│           └── sql/             # Scripts de teste
-├── config/pmd/ruleset.xml       # Regras de análise estática
-├── build.gradle                 # Dependências e build
-├── Dockerfile                   # Build de container
-└── docker-compose.yml           # Orquestração de containers
-```
-
 ## 🧪 Testes
 
 ### Executar Todos os Testes

@@ -4,7 +4,7 @@ Interface React + TypeScript para o sistema de votação fullstack.
 
 ## 📋 Pré-requisitos
 
-- **Node.js** 18+
+- **Node.js** 22+
 - **npm** ou **yarn**
 
 ## 🚀 Como Iniciar
@@ -41,44 +41,6 @@ npm run preview
 
 ```bash
 npm run lint
-```
-
-## 📁 Estrutura de Pastas
-
-```
-src/
-├── components/          # Componentes reutilizáveis
-│   ├── ErrorBoundary.tsx
-│   └── PrivateRoute.tsx
-├── contexts/            # Context API
-│   └── AuthContext.tsx
-├── pages/               # Páginas da aplicação
-│   ├── Login.tsx
-│   └── pauta/
-│       ├── PautaCard.tsx
-│       ├── PautaList.tsx
-│       ├── PautaModalForm.tsx
-│       └── VotacaoResultado.tsx
-├── services/            # Serviços de API
-│   ├── api.ts
-│   ├── authService.ts
-│   ├── errorInterceptor.ts
-│   ├── pautaService.ts
-│   └── index.ts
-├── types/               # Tipos TypeScript
-│   ├── index.ts
-│   ├── LoginRequest.ts
-│   ├── NovaPauta.ts
-│   ├── Pauta.ts
-│   ├── PautaVoto.ts
-│   ├── User.ts
-│   └── VotoRequest.ts
-├── utils/               # Utilitários
-│   └── dateUtils.ts
-├── App.tsx
-├── App.css
-├── main.tsx
-└── index.css
 ```
 
 ## 🔧 Variáveis de Ambiente

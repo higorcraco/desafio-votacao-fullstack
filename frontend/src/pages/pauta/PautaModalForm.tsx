@@ -14,6 +14,7 @@ const PautaModalForm: React.FC<PautaModalFormProps> = ({
   onHide,
   onSuccess,
 }) => {
+  const [titulo, setTitulo] = useState("");
   const [descricao, setDescricao] = useState("");
   const [duracao, setDuracao] = useState(1);
   const [erro, setErro] = useState("");
@@ -23,8 +24,8 @@ const PautaModalForm: React.FC<PautaModalFormProps> = ({
     e.preventDefault();
     setErro("");
 
-    if (descricao.trim().length < 10) {
-      setErro("A descrição deve ter no mínimo 10 caracteres.");
+    if (titulo.trim().length < 5) {
+      setErro("O título deve ter no mínimo 5 caracteres.");
       return;
     }
 
@@ -36,10 +37,12 @@ const PautaModalForm: React.FC<PautaModalFormProps> = ({
     setSalvando(true);
 
     try {
-      await pautaService.criarPauta({
+      await pautaService.create({
+        titulo: titulo.trim(),
         descricao: descricao.trim(),
         duracao,
       });
+      setTitulo("");
       setDescricao("");
       setDuracao(1);
       onSuccess();
@@ -71,6 +74,19 @@ const PautaModalForm: React.FC<PautaModalFormProps> = ({
           {erro && <Alert variant="danger">{erro}</Alert>}
 
           <Form.Group className="mb-3">
+            <Form.Label>Título *</Form.Label>
+            <Form.Control
+              type="text"
+              value={titulo}
+              onChange={(e) => setTitulo(e.target.value)}
+              placeholder="Digite o título da pauta..."
+              required
+              minLength={5}
+            />
+            <Form.Text className="text-muted">Mínimo de 5 caracteres</Form.Text>
+          </Form.Group>
+
+          <Form.Group className="mb-3">
             <Form.Label>Descrição *</Form.Label>
             <Form.Control
               as="textarea"
@@ -78,12 +94,7 @@ const PautaModalForm: React.FC<PautaModalFormProps> = ({
               value={descricao}
               onChange={(e) => setDescricao(e.target.value)}
               placeholder="Descreva a pauta para votação..."
-              required
-              minLength={10}
             />
-            <Form.Text className="text-muted">
-              Mínimo de 10 caracteres
-            </Form.Text>
           </Form.Group>
 
           <Form.Group className="mb-3">

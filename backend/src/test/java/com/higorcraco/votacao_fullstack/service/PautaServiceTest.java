@@ -15,6 +15,7 @@ import com.higorcraco.votacao_fullstack.dto.CreatePautaDto;
 import com.higorcraco.votacao_fullstack.dto.VotoDto;
 import com.higorcraco.votacao_fullstack.dto.integracao.CpfStatusDto;
 import com.higorcraco.votacao_fullstack.exception.NotFoundException;
+import com.higorcraco.votacao_fullstack.exception.integracao.CpfIntegracaoInvalidoException;
 import com.higorcraco.votacao_fullstack.repository.PautaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
@@ -58,6 +60,7 @@ class PautaServiceTest {
     private Pauta getPauta() {
         Pauta pauta = new Pauta();
         pauta.setId(UUID.randomUUID());
+        pauta.setTitulo("Pauta título");
         pauta.setDescricao("Pauta sobre orçamento");
         pauta.setDuracao(60L);
         pauta.setDataCriacao(Instant.now());
@@ -76,16 +79,21 @@ class PautaServiceTest {
     @Test
     void create() {
         CreatePautaDto dto = new CreatePautaDto();
+        dto.setTitulo("Título");
         dto.setDescricao("Nova pauta");
         dto.setDuracao(30L);
 
-        Pauta pautaMock = getPauta();
-        when(pautaRepository.saveAndFlush(any(Pauta.class))).thenReturn(pautaMock);
+        when(pautaRepository.saveAndFlush(any(Pauta.class))).thenAnswer(i -> i.getArgument(0));
 
         Pauta resultado = pautaService.create(dto);
 
         assertThat(resultado).isNotNull();
-        assertThat(resultado.getId()).isEqualTo(pautaMock.getId());
+        assertThat(resultado.getTitulo()).isEqualTo(dto.getTitulo());
+        assertThat(resultado.getDescricao()).isEqualTo(dto.getDescricao());
+        assertThat(resultado.getDuracao()).isEqualTo(dto.getDuracao());
+        assertThat(resultado.getDataCriacao()).isNotNull();
+        assertThat(resultado.getDataFinalVotacao()).isNotNull();
+        assertThat(resultado.getDataFinalVotacao()).isAfter(resultado.getDataCriacao());
         verify(pautaRepository, times(1)).saveAndFlush(any(Pauta.class));
     }
 
@@ -103,7 +111,8 @@ class PautaServiceTest {
 
         when(usuarioService.findByIdThrow(usuarioId)).thenReturn(usuarioMock);
         when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pautaMock));
-        when(cpfValidatorClient.consultaStatus(any())).thenReturn(new CpfStatusDto(CpfStatusEnum.ABLE_TO_VOTE.name()));
+        when(cpfValidatorClient.consultaStatus(usuarioMock.getCpf()))
+                .thenReturn(new CpfStatusDto(CpfStatusEnum.ABLE_TO_VOTE.name()));
         when(pautaVotoService.existsByPautaIdAndUsuarioId(pautaId, usuarioId)).thenReturn(false);
         when(pautaVotoService.save(any(PautaVoto.class))).thenAnswer(i -> {
             PautaVoto pautaVoto = i.getArgument(0);
@@ -119,11 +128,6 @@ class PautaServiceTest {
         assertThat(resultado.getPauta()).isEqualTo(pautaMock);
         assertThat(resultado.getUsuario()).isEqualTo(usuarioMock);
 
-
-        verify(usuarioService).findByIdThrow(usuarioId);
-        verify(pautaRepository).findById(pautaId);
-        verify(cpfValidatorClient).consultaStatus(usuarioMock.getCpf());
-        verify(pautaVotoService).existsByPautaIdAndUsuarioId(pautaId, usuarioId);
         verify(pautaVotoService).save(any(PautaVoto.class));
         verifyNoMoreInteractions(usuarioService, pautaRepository, cpfValidatorClient, pautaVotoService);
     }
@@ -143,13 +147,16 @@ class PautaServiceTest {
 
         when(usuarioService.findByIdThrow(usuarioId)).thenReturn(usuarioMock);
         when(pautaRepository.findById(pautaFinalizada.getId())).thenReturn(Optional.of(pautaFinalizada));
-        when(cpfValidatorClient.consultaStatus(any())).thenReturn(new CpfStatusDto(CpfStatusEnum.ABLE_TO_VOTE.name()));
+        when(cpfValidatorClient.consultaStatus(usuarioMock.getCpf()))
+                .thenReturn(new CpfStatusDto(CpfStatusEnum.ABLE_TO_VOTE.name()));
 
         assertThatThrownBy(() -> pautaService.adicionaVoto(pautaFinalizada.getId(), votoDto))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("Esta pauta já está finalizada");
 
         verify(pautaRepository, never()).saveAndFlush(any(Pauta.class));
+        verifyNoMoreInteractions(usuarioService, pautaRepository, cpfValidatorClient);
+        verifyNoInteractions(pautaVotoService);
     }
 
     @Test
@@ -165,7 +172,8 @@ class PautaServiceTest {
 
         when(usuarioService.findByIdThrow(usuarioId)).thenReturn(usuarioMock);
         when(pautaRepository.findById(pautaId)).thenReturn(Optional.of(pautaMock));
-        when(cpfValidatorClient.consultaStatus(any())).thenReturn(new CpfStatusDto(CpfStatusEnum.ABLE_TO_VOTE.name()));
+        when(cpfValidatorClient.consultaStatus(usuarioMock.getCpf()))
+                .thenReturn(new CpfStatusDto(CpfStatusEnum.ABLE_TO_VOTE.name()));
         when(pautaVotoService.existsByPautaIdAndUsuarioId(pautaId, usuarioId)).thenReturn(true);
 
         assertThatThrownBy(() -> pautaService.adicionaVoto(pautaId, votoDto))
@@ -173,6 +181,7 @@ class PautaServiceTest {
                 .hasMessageContaining("Você já votou nesta pauta");
 
         verify(pautaRepository, never()).saveAndFlush(any(Pauta.class));
+        verifyNoMoreInteractions(usuarioService, pautaRepository, cpfValidatorClient, pautaVotoService);
     }
 
     @Test
@@ -191,6 +200,8 @@ class PautaServiceTest {
                 .isInstanceOf(NotFoundException.class);
 
         verify(pautaRepository, never()).saveAndFlush(any(Pauta.class));
+        verifyNoMoreInteractions(usuarioService);
+        verifyNoInteractions(pautaRepository, cpfValidatorClient, pautaVotoService);
     }
 
     @Test
@@ -210,5 +221,34 @@ class PautaServiceTest {
                 .isInstanceOf(NotFoundException.class);
 
         verify(pautaRepository, never()).saveAndFlush(any(Pauta.class));
+
+        verifyNoMoreInteractions(usuarioService, pautaRepository, cpfValidatorClient);
+        verifyNoInteractions(pautaVotoService);
+    }
+
+    @Test
+    void adicionaVoto_quandoUsuarioEstaInabilitado_deveLancarCpfInvalidoException() {
+        Usuario usuarioMock = getUsuario();
+        UUID usuarioId = usuarioMock.getId();
+
+        Pauta pauta = new Pauta();
+        pauta.setId(UUID.randomUUID());
+
+        VotoDto votoDto = new VotoDto();
+        votoDto.setUsuarioId(usuarioId);
+        votoDto.setVoto(true);
+
+        when(usuarioService.findByIdThrow(usuarioId)).thenReturn(usuarioMock);
+        when(pautaRepository.findById(pauta.getId())).thenReturn(Optional.of(pauta));
+        when(cpfValidatorClient.consultaStatus(usuarioMock.getCpf()))
+                .thenReturn(new CpfStatusDto(CpfStatusEnum.UNABLE_TO_VOTE.name()));
+
+        assertThatThrownBy(() -> pautaService.adicionaVoto(pauta.getId(), votoDto))
+                .isInstanceOf(CpfIntegracaoInvalidoException.class)
+                .hasMessageContaining("Este CPF está inabilitado para votos");
+
+        verify(pautaRepository, never()).saveAndFlush(any(Pauta.class));
+        verifyNoMoreInteractions(usuarioService, pautaRepository, cpfValidatorClient);
+        verifyNoInteractions(pautaVotoService);
     }
 }

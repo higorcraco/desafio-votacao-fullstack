@@ -13,6 +13,7 @@ import com.higorcraco.votacao_fullstack.domain.integracao.enums.CpfStatusEnum;
 import com.higorcraco.votacao_fullstack.dto.CreatePautaDto;
 import com.higorcraco.votacao_fullstack.dto.VotoDto;
 import com.higorcraco.votacao_fullstack.dto.integracao.CpfStatusDto;
+import com.higorcraco.votacao_fullstack.exception.integracao.CpfIntegracaoInvalidoException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class PautaService extends ReadOnlyService<Pauta, UUID>{
 
     public Pauta create(CreatePautaDto createPautaDto) {
         Pauta pauta = new Pauta();
+        pauta.setTitulo(createPautaDto.getTitulo());
         pauta.setDescricao(createPautaDto.getDescricao());
         pauta.setDuracao(createPautaDto.getDuracao());
         pauta.setDataCriacao(Instant.now());
@@ -41,7 +43,7 @@ public class PautaService extends ReadOnlyService<Pauta, UUID>{
         CpfStatusDto cpfStatus = cpfValidatorClient.consultaStatus(usuario.getCpf());
 
         if (CpfStatusEnum.UNABLE_TO_VOTE.name().equals(cpfStatus.getStatus())) {
-            throw new IllegalStateException("Este CPF inabilitado para votos");
+            throw new CpfIntegracaoInvalidoException("Este CPF está inabilitado para votos");
         }
 
         if (PautaStatusEnum.FINALIZADA.equals(pauta.getStatus())) {

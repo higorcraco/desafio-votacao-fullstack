@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ProgressBar } from "react-bootstrap";
-import type { PautaVoto } from "../../types/PautaVoto";
+import type { PautaVoto } from "../../types";
 
 interface VotacaoResultadoProps {
   votos: PautaVoto[];

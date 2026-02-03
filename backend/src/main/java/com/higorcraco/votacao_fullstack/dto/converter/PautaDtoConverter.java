@@ -21,6 +21,7 @@ public class PautaDtoConverter implements DtoConverter<Pauta, PautaDto> {
 
         PautaDto dto = new PautaDto();
         dto.setId(entity.getId());
+        dto.setTitulo(entity.getTitulo());
         dto.setDescricao(entity.getDescricao());
         dto.setDuracao(entity.getDuracao());
         dto.setDataCriacao(entity.getDataCriacao());

@@ -13,6 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -29,12 +31,18 @@ public class Pauta {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @NotBlank
+    private String titulo;
+
     private String descricao;
 
+    @NotNull
     private Long duracao = 1L;
 
+    @NotNull
     private Instant dataCriacao = Instant.now();
 
+    @NotNull
     private Instant dataFinalVotacao;
 
     @OneToMany(mappedBy = "pauta")

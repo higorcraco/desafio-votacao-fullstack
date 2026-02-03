@@ -1,8 +1,8 @@
-INSERT INTO pauta_voto (id, pauta_id, usuario_id)
-VALUES ('6fef3f65-f5b1-4a4d-9254-3c900e09be60', '550e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440000');
+INSERT INTO pauta_voto (id, pauta_id, usuario_id, voto)
+VALUES ('6fef3f65-f5b1-4a4d-9254-3c900e09be60', '550e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440000', true);
 
-INSERT INTO pauta_voto (id, pauta_id, usuario_id)
-VALUES ('6fef3f65-f5b1-4a4d-9254-3c900e09be61', '550e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440001');
+INSERT INTO pauta_voto (id, pauta_id, usuario_id, voto)
+VALUES ('6fef3f65-f5b1-4a4d-9254-3c900e09be61', '550e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440001', false);
 
-INSERT INTO pauta_voto (id, pauta_id, usuario_id)
-VALUES ('6fef3f65-f5b1-4a4d-9254-3c900e09be62', '550e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440000');
+INSERT INTO pauta_voto (id, pauta_id, usuario_id, voto)
+VALUES ('6fef3f65-f5b1-4a4d-9254-3c900e09be62', '550e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440000', true);

@@ -10,10 +10,10 @@ import VotacaoResultado from "./VotacaoResultado";
 
 interface PautaCardProps {
   pauta: Pauta;
-  onVotoSuccess: () => void;
+  updatePauta: (pautaId: string) => void;
 }
 
-const PautaCard: React.FC<PautaCardProps> = ({ pauta, onVotoSuccess }) => {
+const PautaCard: React.FC<PautaCardProps> = ({ pauta, updatePauta }) => {
   const { user } = useAuth();
   const [emAndamento, setEmAndamento] = useState(false);
   const [tempoRestante, setTempoRestante] = useState("");
@@ -35,6 +35,7 @@ const PautaCard: React.FC<PautaCardProps> = ({ pauta, onVotoSuccess }) => {
       if (agora >= final) {
         setEmAndamento(false);
         setTempoRestante("");
+        updatePauta(pauta.id);
         return false;
       } else {
         setEmAndamento(true);
@@ -64,7 +65,7 @@ const PautaCard: React.FC<PautaCardProps> = ({ pauta, onVotoSuccess }) => {
     setVotando(true);
 
     try {
-      await pautaService.votar(pauta.id, {
+      await pautaService.adicionaVoto(pauta.id, {
         usuarioId: user.id,
         voto,
       });
@@ -77,7 +78,7 @@ const PautaCard: React.FC<PautaCardProps> = ({ pauta, onVotoSuccess }) => {
         confirmButtonColor: "#198754",
       });
 
-      onVotoSuccess();
+      updatePauta(pauta.id);
     } catch (error: any) {
       const mensagem =
         error.response?.data?.message ||
@@ -113,13 +114,29 @@ const PautaCard: React.FC<PautaCardProps> = ({ pauta, onVotoSuccess }) => {
 
   return (
     <Card className="h-100 shadow-sm">
-      <Card.Header className="bg-primary text-white">
-        <div className="d-flex justify-content-between align-items-center">
-          <h5 className="mb-0">{pauta.descricao}</h5>
-          {getStatus()}
+      <Card.Header
+        className="bg-primary text-white"
+        style={{ minHeight: "80px" }}
+      >
+        <div className="d-flex justify-content-between align-items-center gap-2 h-100">
+          <h5
+            className="mb-0"
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {pauta.titulo}
+          </h5>
+          <div className="flex-shrink-0">{getStatus()}</div>
         </div>
       </Card.Header>
       <Card.Body>
+        <p>{pauta.descricao}</p>
+
         <p className="text-muted mb-2">
           <small>Criada em: {formatarData(pauta.dataCriacao)}</small>
         </p>
@@ -132,11 +149,13 @@ const PautaCard: React.FC<PautaCardProps> = ({ pauta, onVotoSuccess }) => {
             Fecha em: {tempoRestante}
           </span>
         )}
-
-        {(!emAndamento || usuarioVotou) && (
-          <VotacaoResultado votos={pauta.votos} />
-        )}
       </Card.Body>
+
+      {(!emAndamento || usuarioVotou) && (
+        <Card.Footer className="bg-light border-top">
+          <VotacaoResultado votos={pauta.votos} />
+        </Card.Footer>
+      )}
 
       {emAndamento && !usuarioVotou && (
         <Card.Footer className="bg-light">
