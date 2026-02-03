@@ -129,12 +129,14 @@ const PautaCard: React.FC<PautaCardProps> = ({ pauta, updatePauta }) => {
               textOverflow: "ellipsis",
             }}
           >
-            {pauta.descricao}
+            {pauta.titulo}
           </h5>
           <div className="flex-shrink-0">{getStatus()}</div>
         </div>
       </Card.Header>
       <Card.Body>
+        <p>{pauta.descricao}</p>
+
         <p className="text-muted mb-2">
           <small>Criada em: {formatarData(pauta.dataCriacao)}</small>
         </p>

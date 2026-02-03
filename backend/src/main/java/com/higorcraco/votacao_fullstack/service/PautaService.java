@@ -27,6 +27,7 @@ public class PautaService extends ReadOnlyService<Pauta, UUID>{
 
     public Pauta create(CreatePautaDto createPautaDto) {
         Pauta pauta = new Pauta();
+        pauta.setTitulo(createPautaDto.getTitulo());
         pauta.setDescricao(createPautaDto.getDescricao());
         pauta.setDuracao(createPautaDto.getDuracao());
         pauta.setDataCriacao(Instant.now());

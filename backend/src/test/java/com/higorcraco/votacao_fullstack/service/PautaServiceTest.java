@@ -60,6 +60,7 @@ class PautaServiceTest {
     private Pauta getPauta() {
         Pauta pauta = new Pauta();
         pauta.setId(UUID.randomUUID());
+        pauta.setTitulo("Pauta título");
         pauta.setDescricao("Pauta sobre orçamento");
         pauta.setDuracao(60L);
         pauta.setDataCriacao(Instant.now());
@@ -78,16 +79,21 @@ class PautaServiceTest {
     @Test
     void create() {
         CreatePautaDto dto = new CreatePautaDto();
+        dto.setTitulo("Título");
         dto.setDescricao("Nova pauta");
         dto.setDuracao(30L);
 
-        Pauta pautaMock = getPauta();
-        when(pautaRepository.saveAndFlush(any(Pauta.class))).thenReturn(pautaMock);
+        when(pautaRepository.saveAndFlush(any(Pauta.class))).thenAnswer(i -> i.getArgument(0));
 
         Pauta resultado = pautaService.create(dto);
 
         assertThat(resultado).isNotNull();
-        assertThat(resultado.getId()).isEqualTo(pautaMock.getId());
+        assertThat(resultado.getTitulo()).isEqualTo(dto.getTitulo());
+        assertThat(resultado.getDescricao()).isEqualTo(dto.getDescricao());
+        assertThat(resultado.getDuracao()).isEqualTo(dto.getDuracao());
+        assertThat(resultado.getDataCriacao()).isNotNull();
+        assertThat(resultado.getDataFinalVotacao()).isNotNull();
+        assertThat(resultado.getDataFinalVotacao()).isAfter(resultado.getDataCriacao());
         verify(pautaRepository, times(1)).saveAndFlush(any(Pauta.class));
     }
 

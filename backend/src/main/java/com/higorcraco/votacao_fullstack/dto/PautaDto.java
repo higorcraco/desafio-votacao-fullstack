@@ -10,6 +10,7 @@ import lombok.Data;
 public class PautaDto {
 
     private UUID id;
+    private String titulo;
     private String descricao;
     private Long duracao;
     private Instant dataCriacao;

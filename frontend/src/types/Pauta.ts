@@ -2,6 +2,7 @@ import type { PautaVoto } from "./PautaVoto";
 
 export interface Pauta {
   id: string;
+  titulo: string;
   descricao: string;
   duracao: number;
   dataCriacao: string;
