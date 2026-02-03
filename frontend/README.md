@@ -4,7 +4,7 @@ Interface React + TypeScript para o sistema de votação fullstack.
 
 ## 📋 Pré-requisitos
 
-- **Node.js** 18+
+- **Node.js** 22+
 - **npm** ou **yarn**
 
 ## 🚀 Como Iniciar

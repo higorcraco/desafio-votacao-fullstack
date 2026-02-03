@@ -2,6 +2,8 @@
 
 Este projeto é uma solução para gerenciamento de sessões de votação em assembleias de cooperativas. A aplicação permite o cadastro de pautas, abertura de sessões com tempo determinado e a contabilização de votos (Sim/Não) de associados, garantindo a unicidade do voto por CPF.
 
+As definições deste teste técnico podem ser encontrados [aqui](./OBJETIVOS.md).
+
 ---
 
 ## Considerações
@@ -133,7 +135,6 @@ A documentação interativa da API (Swagger/OpenAPI) pode ser acessada, com a ap
 - [ ] Implementação de Cache com Redis para verificar se o usuário já votou, definindo o tempo de expiração da informação pela duração da pauta.
 - [ ] Autenticação JWT com Usuário no ContextHolder.
 - [ ] Utilização de RSQL para buscas complexas
-- [ ] Paginação
 
 ---
 
